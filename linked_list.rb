@@ -101,3 +101,6 @@ class Node < LinkedList
     @next_node = next_node
   end
 end
+
+node = Node.new(10)
+puts node.next_node

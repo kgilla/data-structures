@@ -2,43 +2,28 @@ class Tree
   attr_accessor :root
 
   def initialize (array)
-    @root = nil 
-    build_tree(array)
+    @root = build_tree(array)
   end 
 
   def build_tree (array)
-    array.uniq!
-    sorted = array.sort
-    middle = sorted[sorted.length / 2]
-    @root = Node.new(middle)
-    array.delete(middle)
-    array.each do |new_value|
-      insert(new_value)
-    end
+    return nil unless array[0]
+    array.sort!.uniq!
+    middle = array.length / 2
+    mid_plus = middle + 1
+    root = Node.new(array[middle])
+    root.left = build_tree(array[0...middle])
+    root.right = build_tree(array[mid_plus..-1])
+    return root
   end
 
-  def insert (new_value, node = @root)
-    case new_value <=> node.value
-    when 1 then insert_right(new_value, node)
-    when -1 then insert_left(new_value, node)
-    when 0 then "Value already exists"
-    end
-  end
-
-  def insert_left (new_value, node)
-    if node.left.nil?
-      node.left = Node.new(new_value)
-    else
-      insert(new_value, node.left)
-    end
-  end
-
-  def insert_right (new_value, node)
-    if node.right.nil?
-      node.right = Node.new(new_value)
-    else
-      insert(new_value, node.right)
-    end
+  def insert (value, node = @root)
+    if node.value == value
+      puts "Value already exists"
+    elsif value < node.value
+      node.left.nil? ? node.left = Node.new(value) : insert(value, node.left)
+    elsif value > node.value
+      node.right.nil? ? node.right = Node.new(value) : insert(value, node.right)
+    end 
   end
 
   def delete (value, node = @root)
@@ -114,7 +99,7 @@ class Tree
   def rebalance!
     array = []
     level_order { |a| array << a.value }
-    build_tree(array)
+    @root = build_tree(array)
   end
 end
 
@@ -129,19 +114,30 @@ class Node
   end 
 end
 
-# array = Array.new(10) { rand(1..100) }
-array = [34,67,56,12,44,99,87,32,2,65,78,21,52]
+array = Array.new(15) { rand(1..100) }
 tree = Tree.new(array)
-tree.insert(25)
-# tree.level_order { |a| puts a.value}
-# tree.inorder { |a| print "#{a.value} , " }
-tree.preorder { |a| print "#{a.value} , " }
+puts tree.balanced?
+tree.level_order { |a| print a.value.to_s + ", " }
 puts " "
-# tree.postorder { |a| print "#{a.value} , " }
-# puts tree.depth
-# tree.balanced?
-tree.delete(25)
-tree.delete(44)
-tree.preorder { |a| print "#{a.value} , " }
-# tree.rebalance!
-# tree.preorder { |a| print "#{a.value} , " }
+tree.preorder { |a| print a.value.to_s + ", " }
+puts " "
+tree.postorder { |a| print a.value.to_s + ", " }
+puts " "
+tree.inorder { |a| print a.value.to_s + ", " }
+puts " "
+tree.insert(100)
+tree.insert(101)
+tree.insert(102)
+tree.insert(103)
+tree.insert(104)
+puts tree.balanced?
+tree.rebalance!
+puts tree.balanced?
+tree.level_order { |a| print a.value.to_s + ", " }
+puts " "
+tree.preorder { |a| print a.value.to_s + ", " }
+puts " "
+tree.postorder { |a| print a.value.to_s + ", " }
+puts " "
+tree.inorder { |a| print a.value.to_s + ", " }
+puts " "

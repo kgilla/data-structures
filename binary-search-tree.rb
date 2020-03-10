@@ -36,7 +36,10 @@ class Tree
     elsif temp.right.nil? && temp.left != nil
       parent.left == temp ? parent.left = temp.left : parent.right = temp.left
     else 
-      puts "2 children"
+      min = temp.right
+      node = min
+      parent.left == temp ? parent.left = min : parent.right = min
+      delete(node.value, node)
     end 
   end
 
@@ -103,7 +106,7 @@ class Tree
   end
 end
 
-class Node
+class Node < Tree
   attr_reader :value
   attr_accessor :left, :right
 
@@ -114,6 +117,7 @@ class Node
   end 
 end
 
+# tests
 array = Array.new(15) { rand(1..100) }
 tree = Tree.new(array)
 puts tree.balanced?
@@ -133,6 +137,7 @@ tree.insert(104)
 puts tree.balanced?
 tree.rebalance!
 puts tree.balanced?
+tree.delete(54)
 tree.level_order { |a| print a.value.to_s + ", " }
 puts " "
 tree.preorder { |a| print a.value.to_s + ", " }
